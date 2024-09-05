@@ -303,6 +303,47 @@ static Value *expandNormalizeIntrinsic(CallInst *Orig) {
   return Builder.CreateFMul(X, MultiplicandVec);
 }
 
+Value *expandAtan2Intrinsic(CallInst *Orig) {
+  Value *Y = Orig->getOperand(0);
+  Value *X = Orig->getOperand(1);
+  Type *Ty = X->getType();
+  IRBuilder<> Builder(Orig);
+
+  Value *Tan = Builder.CreateFDiv(Y, X);
+
+  Value *Atan = Builder.CreateIntrinsic(Ty, Intrinsic::atan, {Tan}, nullptr, "Elt.Atan");
+
+  Constant *Pi = ConstantFP::get(Ty, M_PI);
+  Constant *HalfPi = ConstantFP::get(Ty, M_PI / 2);
+  Constant *NegHalfPi = ConstantFP::get(Ty, -M_PI / 2);
+  Constant *Zero = ConstantFP::get(Ty, 0);
+
+  Value *AtanAddPi = Builder.CreateFAdd(Atan, Pi);
+  Value *AtanSubPi = Builder.CreateFSub(Atan, Pi);
+
+  Value *Result = Atan;
+
+  Value *XLt0 = Builder.CreateFCmpOLT(X, Zero);
+  Value *XEq0 = Builder.CreateFCmpOEQ(X, Zero);
+
+  Value *YGe0 = Builder.CreateFCmpOGE(Y, Zero);
+  Value *YLt0 = Builder.CreateFCmpOLT(Y, Zero);
+
+  Value *XLt0AndYGe0 = Builder.CreateAnd(XLt0, YGe0);
+  Result = Builder.CreateSelect(XLt0AndYGe0, AtanAddPi, Result);
+
+  Value *XLt0AndYLt0 = Builder.CreateAnd(XLt0, YLt0);
+  Result = Builder.CreateSelect(XLt0AndYLt0, AtanSubPi, Result);
+
+  Value *XEq0AndYLt0 = Builder.CreateAnd(XEq0, YLt0);
+  Result = Builder.CreateSelect(XEq0AndYLt0, NegHalfPi, Result);
+
+  Value *XEq0AndYGe0 = Builder.CreateAnd(XEq0, YGe0);
+  Result = Builder.CreateSelect(XEq0AndYGe0, HalfPi, Result);
+
+  return Result;
+}
+
 static Value *expandPowIntrinsic(CallInst *Orig) {
 
   Value *X = Orig->getOperand(0);
@@ -381,6 +422,9 @@ static bool expandIntrinsic(Function &F, CallInst *Orig) {
   case Intrinsic::dx_all:
   case Intrinsic::dx_any:
     Result = expandAnyOrAllIntrinsic(Orig, IntrinsicId);
+    break;
+  case Intrinsic::dx_atan2:
+    Result = expandAtan2Intrinsic(Orig);
     break;
   case Intrinsic::dx_uclamp:
   case Intrinsic::dx_clamp:

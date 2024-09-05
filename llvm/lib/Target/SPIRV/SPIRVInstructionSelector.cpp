@@ -1473,6 +1473,24 @@ bool SPIRVInstructionSelector::selectNormalize(Register ResVReg,
       .constrainAllUses(TII, TRI, RBI);
 }
 
+bool SPIRVInstructionSelector::selectAtan2(Register ResVReg,
+                                           const SPIRVType *ResType,
+                                           MachineInstr &I) const {
+  assert(I.getNumOperands() == 4);
+  assert(I.getOperand(2).isReg());
+  assert(I.getOperand(3).isReg());
+  MachineBasicBlock &BB = *I.getParent();
+
+  return BuildMI(BB, I, I.getDebugLoc(), TII.get(SPIRV::OpExtInst))
+      .addDef(ResVReg)
+      .addUse(GR.getSPIRVTypeID(ResType))
+      .addImm(static_cast<uint32_t>(SPIRV::InstructionSet::GLSL_std_450))
+      .addImm(GL::Atan2)
+      .addUse(I.getOperand(2).getReg())
+      .addUse(I.getOperand(3).getReg())
+      .constrainAllUses(TII, TRI, RBI);
+}
+
 bool SPIRVInstructionSelector::selectRsqrt(Register ResVReg,
                                            const SPIRVType *ResType,
                                            MachineInstr &I) const {
@@ -2351,6 +2369,8 @@ bool SPIRVInstructionSelector::selectIntrinsic(Register ResVReg,
   } break;
   case Intrinsic::spv_saturate:
     return selectSaturate(ResVReg, ResType, I);
+  case Intrinsic::spv_atan2:
+    return selectAtan2(ResVReg, ResType, I);
   default: {
     std::string DiagMsg;
     raw_string_ostream OS(DiagMsg);
