@@ -156,6 +156,9 @@ private:
   bool selectAny(Register ResVReg, const SPIRVType *ResType,
                  MachineInstr &I) const;
 
+  bool selectAtan2(Register ResVReg, const SPIRVType *ResType,
+                   MachineInstr &I) const;
+
   bool selectBitreverse(Register ResVReg, const SPIRVType *ResType,
                         MachineInstr &I) const;
 

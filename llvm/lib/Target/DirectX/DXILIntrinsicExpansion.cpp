@@ -303,7 +303,7 @@ static Value *expandNormalizeIntrinsic(CallInst *Orig) {
   return Builder.CreateFMul(X, MultiplicandVec);
 }
 
-Value *expandAtan2Intrinsic(CallInst *Orig) {
+static Value *expandAtan2Intrinsic(CallInst *Orig) {
   Value *Y = Orig->getOperand(0);
   Value *X = Orig->getOperand(1);
   Type *Ty = X->getType();
@@ -311,11 +311,12 @@ Value *expandAtan2Intrinsic(CallInst *Orig) {
 
   Value *Tan = Builder.CreateFDiv(Y, X);
 
-  Value *Atan = Builder.CreateIntrinsic(Ty, Intrinsic::atan, {Tan}, nullptr, "Elt.Atan");
+  Value *Atan =
+      Builder.CreateIntrinsic(Ty, Intrinsic::atan, {Tan}, nullptr, "Elt.Atan");
 
-  Constant *Pi = ConstantFP::get(Ty, M_PI);
-  Constant *HalfPi = ConstantFP::get(Ty, M_PI / 2);
-  Constant *NegHalfPi = ConstantFP::get(Ty, -M_PI / 2);
+  Constant *Pi = ConstantFP::get(Ty, llvm::numbers::pi);
+  Constant *HalfPi = ConstantFP::get(Ty, llvm::numbers::pi / 2);
+  Constant *NegHalfPi = ConstantFP::get(Ty, -llvm::numbers::pi / 2);
   Constant *Zero = ConstantFP::get(Ty, 0);
 
   Value *AtanAddPi = Builder.CreateFAdd(Atan, Pi);
