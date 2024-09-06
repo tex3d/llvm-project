@@ -34,6 +34,7 @@ using namespace llvm;
 static bool isIntrinsicExpansion(Function &F) {
   switch (F.getIntrinsicID()) {
   case Intrinsic::abs:
+  case Intrinsic::atan2:
   case Intrinsic::exp:
   case Intrinsic::log:
   case Intrinsic::log10:
@@ -408,6 +409,9 @@ static bool expandIntrinsic(Function &F, CallInst *Orig) {
   case Intrinsic::abs:
     Result = expandAbs(Orig);
     break;
+  case Intrinsic::atan2:
+    Result = expandAtan2Intrinsic(Orig);
+    break;
   case Intrinsic::exp:
     Result = expandExpIntrinsic(Orig);
     break;
@@ -423,9 +427,6 @@ static bool expandIntrinsic(Function &F, CallInst *Orig) {
   case Intrinsic::dx_all:
   case Intrinsic::dx_any:
     Result = expandAnyOrAllIntrinsic(Orig, IntrinsicId);
-    break;
-  case Intrinsic::dx_atan2:
-    Result = expandAtan2Intrinsic(Orig);
     break;
   case Intrinsic::dx_uclamp:
   case Intrinsic::dx_clamp:

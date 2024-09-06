@@ -221,6 +221,13 @@ def Atan2F128 : Builtin {
   let Prototype = "__float128(__float128, __float128)";
 }
 
+def Atan2F16F128 : Builtin, F16F128MathTemplate {
+  let Spellings = ["__builtin_atan2"];
+  let Attributes = [FunctionWithBuiltinPrefix, NoThrow,
+                    ConstIgnoringErrnoAndExceptions];
+  let Prototype = "T(T, T)";
+}
+
 def CopysignF16 : Builtin {
   let Spellings = ["__builtin_copysignf16"];
   let Attributes = [FunctionWithBuiltinPrefix, NoThrow, Const];
@@ -1240,6 +1247,12 @@ def ElementwiseASin : Builtin {
 
 def ElementwiseATan : Builtin {
   let Spellings = ["__builtin_elementwise_atan"];
+  let Attributes = [NoThrow, Const, CustomTypeChecking];
+  let Prototype = "void(...)";
+}
+
+def ElementwiseATan2 : Builtin {
+  let Spellings = ["__builtin_elementwise_atan2"];
   let Attributes = [NoThrow, Const, CustomTypeChecking];
   let Prototype = "void(...)";
 }
@@ -4665,12 +4678,6 @@ def HLSLAny : LangBuiltin<"HLSL_LANG"> {
   let Spellings = ["__builtin_hlsl_any"];
   let Attributes = [NoThrow, Const];
   let Prototype = "bool(...)";
-}
-
-def HLSLAtan2 : LangBuiltin<"HLSL_LANG"> {
-  let Spellings = ["__builtin_hlsl_elementwise_atan2"];
-  let Attributes = [NoThrow, Const];
-  let Prototype = "void(...)";
 }
 
 def HLSLWaveActiveCountBits : LangBuiltin<"HLSL_LANG"> {

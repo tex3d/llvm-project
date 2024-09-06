@@ -3797,6 +3797,9 @@ RValue CodeGenFunction::EmitBuiltinExpr(const GlobalDecl GD, unsigned BuiltinID,
   case Builtin::BI__builtin_elementwise_atan:
     return RValue::get(emitBuiltinWithOneOverloadedType<1>(
         *this, E, llvm::Intrinsic::atan, "elt.atan"));
+  case Builtin::BI__builtin_elementwise_atan2:
+    return RValue::get(emitBuiltinWithOneOverloadedType<1>(
+        *this, E, llvm::Intrinsic::atan2, "elt.atan2"));
   case Builtin::BI__builtin_elementwise_ceil:
     return RValue::get(emitBuiltinWithOneOverloadedType<1>(
         *this, E, llvm::Intrinsic::ceil, "elt.ceil"));
@@ -18526,17 +18529,6 @@ Value *CodeGenFunction::EmitHLSLBuiltinExpr(unsigned BuiltinID,
         /*ReturnType=*/llvm::Type::getInt1Ty(getLLVMContext()),
         CGM.getHLSLRuntime().getAnyIntrinsic(), ArrayRef<Value *>{Op0}, nullptr,
         "hlsl.any");
-  }
-  case Builtin::BI__builtin_hlsl_elementwise_atan2: {
-    Value *Op0 = EmitScalarExpr(E->getArg(0));
-    Value *Op1 = EmitScalarExpr(E->getArg(1));
-    assert(E->getArg(0)->getType()->hasFloatingRepresentation() &&
-           E->getArg(1)->getType()->hasFloatingRepresentation() &&
-           "atan2 operands must have a float representation");
-    return Builder.CreateIntrinsic(
-        /*ReturnType=*/Op0->getType(),
-        CGM.getHLSLRuntime().getAtan2Intrinsic(), ArrayRef<Value *>{Op0, Op1},
-        nullptr, "hlsl.atan2");
   }
   case Builtin::BI__builtin_hlsl_elementwise_clamp: {
     Value *OpX = EmitScalarExpr(E->getArg(0));
