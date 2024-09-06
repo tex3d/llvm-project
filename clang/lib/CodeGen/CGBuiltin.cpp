@@ -3798,7 +3798,7 @@ RValue CodeGenFunction::EmitBuiltinExpr(const GlobalDecl GD, unsigned BuiltinID,
     return RValue::get(emitBuiltinWithOneOverloadedType<1>(
         *this, E, llvm::Intrinsic::atan, "elt.atan"));
   case Builtin::BI__builtin_elementwise_atan2:
-    return RValue::get(emitBuiltinWithOneOverloadedType<1>(
+    return RValue::get(emitBuiltinWithOneOverloadedType<2>(
         *this, E, llvm::Intrinsic::atan2, "elt.atan2"));
   case Builtin::BI__builtin_elementwise_ceil:
     return RValue::get(emitBuiltinWithOneOverloadedType<1>(
