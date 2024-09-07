@@ -9,12 +9,12 @@ entry:
   ret float %elt.atan2
 }
 
-define noundef half @atan2_half(half noundef %a, float noundef %b) {
+define noundef half @atan2_half(half noundef %a, half noundef %b) {
 entry:
 ; CHECK:call half @dx.op.unary.f16(i32 17, half %{{.*}})
-  %elt.atan2 = call half @llvm.atan.f16(half %a, half %b)
+  %elt.atan2 = call half @llvm.atan2.f16(half %a, half %b)
   ret half %elt.atan2
 }
 
-declare half @llvm.atan2.f16(half)
-declare float @llvm.atan2.f32(float)
+declare half @llvm.atan2.f16(half, half)
+declare float @llvm.atan2.f32(float, float)
