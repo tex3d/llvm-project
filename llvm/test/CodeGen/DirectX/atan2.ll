@@ -5,14 +5,14 @@
 define noundef float @atan2_float(float noundef %a, float noundef %b) {
 entry:
 ; CHECK:call float @dx.op.unary.f32(i32 17, float %{{.*}})
-  %elt.atan2 = call float @llvm.atan2.f32(float %a, %b)
+  %elt.atan2 = call float @llvm.atan2.f32(float %a, float %b)
   ret float %elt.atan2
 }
 
 define noundef half @atan2_half(half noundef %a, float noundef %b) {
 entry:
 ; CHECK:call half @dx.op.unary.f16(i32 17, half %{{.*}})
-  %elt.atan2 = call half @llvm.atan.f16(half %a, %b)
+  %elt.atan2 = call half @llvm.atan.f16(half %a, half %b)
   ret half %elt.atan2
 }
 

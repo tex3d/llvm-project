@@ -447,17 +447,17 @@ void test_builtin_elementwise_atan2(float f1, float f2, float f3, double d1,
   // CHECK-LABEL: define void @test_builtin_elementwise_atan2(
   // CHECK:      [[F1:%.+]] = load float, ptr %f1.addr, align 4
   // CHECK-NEXT: [[F2:%.+]] = load float, ptr %f2.addr, align 4
-  // CHECK-NEXT: call float @atan2f(float [[F1]], float [[F2]])
+  // CHECK-NEXT: call float @atan2.f32(float [[F1]], float [[F2]])
   f3 = __builtin_elementwise_atan2(f1, f2);
 
   // CHECK:      [[D1:%.+]] = load double, ptr %d1.addr, align 8
   // CHECK-NEXT: [[D2:%.+]] = load double, ptr %d2.addr, align 8
-  // CHECK-NEXT: call double @atan2(double [[D1]], double [[D2]])
+  // CHECK-NEXT: call double @atan2.f64(double [[D1]], double [[D2]])
   d3 = __builtin_elementwise_atan2(d1, d2);
 
   // CHECK:      [[VF1:%.+]] = load <4 x float>, ptr %vf1.addr, align 16
   // CHECK-NEXT: [[VF2:%.+]] = load <4 x float>, ptr %vf2.addr, align 16
-  // CHECK-NEXT: call <4 x float> @atan2v4f32(<4 x float> [[VF1]], <4 x float> [[VF2]])
+  // CHECK-NEXT: call <4 x float> @atan2.v4f32(<4 x float> [[VF1]], <4 x float> [[VF2]])
   vf3 = __builtin_elementwise_atan2(vf1, vf2);
 }
 
